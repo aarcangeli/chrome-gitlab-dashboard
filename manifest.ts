@@ -9,13 +9,12 @@ const manifest: chrome.runtime.ManifestV3 = {
   background: { service_worker: "src/pages/background/index.js" },
   action: {
     default_popup: "src/pages/popup/index.html",
-    default_icon: "icon-34.png",
   },
   chrome_url_overrides: {
     newtab: "src/pages/newtab/index.html",
   },
   icons: {
-    "128": "icon-128.png",
+    "256": "gitlab-logo-256.png",
   },
   content_scripts: [
     {
