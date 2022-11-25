@@ -10,20 +10,9 @@ const manifest: chrome.runtime.ManifestV3 = {
   action: {
     default_popup: "src/pages/popup/index.html",
   },
-  chrome_url_overrides: {
-    newtab: "src/pages/newtab/index.html",
-  },
   icons: {
     "256": "gitlab-logo-256.png",
   },
-  content_scripts: [
-    {
-      matches: ["http://*/*", "https://*/*", "<all_urls>"],
-      js: ["src/pages/content/index.js"],
-      css: ["assets/css/contentStyle.chunk.css"],
-    },
-  ],
-  devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
     {
       resources: [
