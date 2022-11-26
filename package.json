@@ -17,8 +17,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@primer/react": "^35.14.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.5.0",
