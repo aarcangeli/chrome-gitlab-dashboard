@@ -1,0 +1,11 @@
+
+.min-width-zero {
+  min-width: 0;
+}
+
+.truncate-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -4,6 +4,7 @@
 ![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![](https://badges.aleen42.com/src/vitejs.svg)
 [![Build And Test](https://github.com/aarcangeli/chrome-gitlab-dashboard/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/aarcangeli/chrome-gitlab-dashboard/actions/workflows/build.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/aarcangeli/chrome-gitlab-dashboard/main.svg)](https://results.pre-commit.ci/latest/github/aarcangeli/chrome-gitlab-dashboard/main)
 
 ## Features
 
@@ -33,8 +34,10 @@
 
 ## Documentation references
 
+- [Chrome Extension](https://developer.chrome.com/docs/extensions/mv3/)
+- [Primer react](https://primer.style/react/)
+- [Styled system](https://styled-system.com/)
 - [Vite Plugin](https://vitejs.dev/guide/api-plugin.html)
-- [ChromeExtension](https://developer.chrome.com/docs/extensions/mv3/)
 - [Rollup](https://rollupjs.org/guide/en/)
 - [Rollup-plugin-chrome-extension](https://www.extend-chrome.dev/rollup-plugin)
 
