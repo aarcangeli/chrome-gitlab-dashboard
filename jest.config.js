@@ -179,11 +179,12 @@ export default {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  // transform: {
-  //   // Use babel-jest to transpile tests with the next/babel preset
-  //   // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
-  //   "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
-  // },
+  transform: {
+    ".+\\.(css|styl|less|sass|scss)$": "jest-css-modules-transform",
+    // Use babel-jest to transpile tests with the next/babel preset
+    // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
+    //   "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
