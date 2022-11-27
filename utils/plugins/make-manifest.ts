@@ -8,9 +8,7 @@ const { resolve } = path;
 
 const outDir = resolve(__dirname, "..", "..", "public");
 
-export default function makeManifest(
-  manifest: chrome.runtime.ManifestV3
-): PluginOption {
+export default function makeManifest(manifest: chrome.runtime.ManifestV3): PluginOption {
   return {
     name: "make-manifest",
     buildEnd() {
@@ -20,10 +18,7 @@ export default function makeManifest(
 
       const manifestPath = resolve(outDir, "manifest.json");
 
-      fs.writeFileSync(
-        manifestPath,
-        ManifestParser.convertManifestToString(manifest)
-      );
+      fs.writeFileSync(manifestPath, ManifestParser.convertManifestToString(manifest));
 
       colorLog(`Manifest file copy complete: ${manifestPath}`, "success");
     },

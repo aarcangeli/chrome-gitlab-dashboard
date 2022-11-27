@@ -1,13 +1,7 @@
 import { WebSocket, WebSocketServer } from "ws";
 import chokidar from "chokidar";
 import { debounce } from "./utils";
-import {
-  LOCAL_RELOAD_SOCKET_PORT,
-  LOCAL_RELOAD_SOCKET_URL,
-  UPDATE_COMPLETE_MESSAGE,
-  UPDATE_PENDING_MESSAGE,
-  UPDATE_REQUEST_MESSAGE,
-} from "./constant";
+import { LOCAL_RELOAD_SOCKET_PORT, LOCAL_RELOAD_SOCKET_URL, UPDATE_COMPLETE_MESSAGE, UPDATE_PENDING_MESSAGE, UPDATE_REQUEST_MESSAGE } from "./constant";
 import { Interpreter } from "./interpreter";
 
 const clientsThatNeedToUpdate: Set<WebSocket> = new Set();

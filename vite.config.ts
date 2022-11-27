@@ -25,12 +25,7 @@ export default defineConfig({
       "@pages": pagesDir,
     },
   },
-  plugins: [
-    react(),
-    makeManifest(manifest),
-    customDynamicImport(),
-    addHmr({ background: enableHmrInBackgroundScript, view: true }),
-  ],
+  plugins: [react(), makeManifest(manifest), customDynamicImport(), addHmr({ background: enableHmrInBackgroundScript, view: true })],
   publicDir,
   build: {
     outDir,
@@ -43,9 +38,7 @@ export default defineConfig({
       },
       output: {
         entryFileNames: "src/pages/[name]/index.js",
-        chunkFileNames: isDev
-          ? "assets/js/[name].js"
-          : "assets/js/[name].[hash].js",
+        chunkFileNames: isDev ? "assets/js/[name].js" : "assets/js/[name].[hash].js",
         assetFileNames: (assetInfo) => {
           const { dir, name: _name } = path.parse(assetInfo.name);
           const assetFolder = getLastElement(dir.split("/"));

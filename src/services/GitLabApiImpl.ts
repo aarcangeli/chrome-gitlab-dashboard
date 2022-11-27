@@ -1,11 +1,10 @@
-import {GitLabApi, IssueSummary} from "@src/services/GitLabApi";
+import { GitLabApi, IssueSummary } from "@src/services/GitLabApi";
 
 class GitLabApiImpl implements GitLabApi {
-  constructor(private host: string, private privateToken: string) {
-  }
+  constructor(private host: string, private privateToken: string) {}
 
   async projects(): Promise<any> {
-    return await this.invokeApi("GET", `/projects`, {membership: "true"});
+    return await this.invokeApi("GET", `/projects`, { membership: "true" });
   }
 
   async issues(assigneeId: number): Promise<IssueSummary[]> {

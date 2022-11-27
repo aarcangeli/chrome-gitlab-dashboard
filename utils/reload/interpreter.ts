@@ -1,8 +1,4 @@
-import {
-  UPDATE_COMPLETE_MESSAGE,
-  UPDATE_PENDING_MESSAGE,
-  UPDATE_REQUEST_MESSAGE,
-} from "./constant";
+import { UPDATE_COMPLETE_MESSAGE, UPDATE_PENDING_MESSAGE, UPDATE_REQUEST_MESSAGE } from "./constant";
 
 export const Interpreter = {
   Send: send,
@@ -28,7 +24,4 @@ type UpdateRequestMessage = {
 
 type UpdateCompleteMessage = { type: typeof UPDATE_COMPLETE_MESSAGE };
 
-type Messages =
-  | UpdateCompleteMessage
-  | UpdateRequestMessage
-  | UpdatePendingMessage;
+type Messages = UpdateCompleteMessage | UpdateRequestMessage | UpdatePendingMessage;

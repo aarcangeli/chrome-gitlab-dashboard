@@ -1,20 +1,9 @@
-import {
-  LOCAL_RELOAD_SOCKET_URL,
-  UPDATE_COMPLETE_MESSAGE,
-  UPDATE_PENDING_MESSAGE,
-  UPDATE_REQUEST_MESSAGE,
-} from "./constant";
+import { LOCAL_RELOAD_SOCKET_URL, UPDATE_COMPLETE_MESSAGE, UPDATE_PENDING_MESSAGE, UPDATE_REQUEST_MESSAGE } from "./constant";
 import { Interpreter } from "./interpreter";
 
 let needToUpdate = false;
 
-export default function initReloadClient({
-  watchPath,
-  onUpdate,
-}: {
-  watchPath: string;
-  onUpdate: () => void;
-}): WebSocket {
+export default function initReloadClient({ watchPath, onUpdate }: { watchPath: string; onUpdate: () => void }): WebSocket {
   const socket = new WebSocket(LOCAL_RELOAD_SOCKET_URL);
 
   function sendUpdateCompleteMessage() {
