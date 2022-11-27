@@ -1,3 +1,5 @@
+exclude: ^\.idea$
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
@@ -10,3 +12,9 @@ repos:
     rev: "v2.7.1"
     hooks:
       - id: prettier
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: "v8.28.0"
+    hooks:
+      - id: eslint
+        args: ["--fix"]
