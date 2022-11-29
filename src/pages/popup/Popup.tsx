@@ -1,14 +1,13 @@
 import React from "react";
 import { BaseStyles, Box, Heading, Link, Spinner, themeGet, ThemeProvider } from "@primer/react";
 import { createGlobalStyle } from "styled-components";
-import IssueInfo from "@pages/popup/IssueInfo";
-import { GearIcon } from "@primer/octicons-react";
-import { GitLabApi, IssueSummary } from "@src/services/GitLabApi";
+import { IssueInfo, ItemType } from "@pages/popup/IssueInfo";
+import { GearIcon, ChevronRightIcon, ChevronDownIcon } from "@primer/octicons-react";
+import { CommonItemSummary, GitLabApi, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
 import { makeGitLabApi } from "@src/services/GitLabApiImpl";
-import AccessTokenDialog from "@src/components/PrivateTokenDialog/AccessTokenDialog";
+import AccessTokenDialog from "@src/components/AccessTokenDialog";
 import { PreferenceStorage } from "@src/services/PreferenceStorage";
-
-const privateToken = "<<glpat-token>>";
+import { IssueBoard } from "@src/components/IssueBoard";
 
 // Apply global styles
 // Background color must be set manually (https://github.com/primer/react/issues/2370#issuecomment-1259357065)
@@ -19,8 +18,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 class State {
-  isLoading = false;
-  issues: IssueSummary[] = [];
+  refreshVersion = 0;
 }
 
 export default class Popup extends React.Component<{}, State> {
@@ -29,28 +27,34 @@ export default class Popup extends React.Component<{}, State> {
 
   constructor(props) {
     super(props);
-    this.state = new State();
     this.storage = new PreferenceStorage();
+    this.state = new State();
 
     if (this.storage.isAccessTokenSet()) {
       this.refreshToken();
-      this.state = { isLoading: true, issues: [] };
     }
   }
 
   refreshToken() {
     this.gitLabApi = makeGitLabApi(this.storage.getHost(), this.storage.getAccessToken());
+    this.setState({ refreshVersion: this.state.refreshVersion + 1 });
+  }
 
-    console.log("before", this.state);
-    this.setState({ isLoading: true });
-    console.log("after", this.state);
-    this.gitLabApi.issues(this.storage.getCurrentUserId()).then((data) => {
-      this.setState({ isLoading: false, issues: data });
-    });
+  async loadIssues(): Promise<IssueSummary[]> {
+    if (!this.storage.isAccessTokenSet()) {
+      return [];
+    }
+    return this.gitLabApi.issues(this.storage.getCurrentUserId());
+  }
+
+  async loadMergeRequests(): Promise<MergeRequestSummary[]> {
+    if (!this.storage.isAccessTokenSet()) {
+      return [];
+    }
+    return this.gitLabApi.mergeRequests(this.storage.getCurrentUserId());
   }
 
   render() {
-    console.log("render", this.state);
     return (
       <div>
         <ThemeProvider colorMode="auto">
@@ -65,22 +69,14 @@ export default class Popup extends React.Component<{}, State> {
                 GitLab Dashboard
               </Heading>
 
-              <Heading sx={{ fontSize: 1, mb: 2 }}>Issues ({this.state.issues.length})</Heading>
+              <IssueBoard title="Issues assigned to you" type={ItemType.Issue} onLoad={() => this.loadIssues()} refreshVersion={this.state.refreshVersion} />
 
-              {/* Spinner */}
-              {this.state.isLoading && (
-                <Box display="flex" justifyContent="center" py="5">
-                  <Spinner />
-                </Box>
-              )}
-
-              <Box pb={2}>
-                {this.state.issues.map((issue) => (
-                  <IssueInfo key={issue.iid} title={issue.title} />
-                ))}
-              </Box>
-
-              <Heading sx={{ fontSize: 1, mb: 2 }}>Review Requested for you</Heading>
+              <IssueBoard
+                title="Review Requested assigned to you"
+                type={ItemType.MergeRequest}
+                onLoad={() => this.loadMergeRequests()}
+                refreshVersion={this.state.refreshVersion}
+              />
 
               <AccessTokenDialog isInitiallyOpen={!this.storage.isAccessTokenSet()} storage={this.storage} onSaved={this.refreshToken.bind(this)} />
             </Box>

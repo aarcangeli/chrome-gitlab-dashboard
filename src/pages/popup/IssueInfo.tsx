@@ -1,31 +1,37 @@
 import { Avatar, Box, IssueLabelToken, Link, Tooltip } from "@primer/react";
-import { IssueOpenedIcon } from "@primer/octicons-react";
+import { CommentDiscussionIcon, IssueOpenedIcon, ThumbsdownIcon, GitPullRequestIcon, ThumbsupIcon } from "@primer/octicons-react";
 import "./IssueInfo.scss";
 import { Component } from "react";
+import { CommonItemSummary, IssueSummary } from "@src/services/GitLabApi";
 
-interface IssueDesc {
-  title: string;
-  link?: string;
+export enum ItemType {
+  Issue,
+  MergeRequest,
 }
 
-export default class IssueInfo extends Component<IssueDesc> {
-  shouldComponentUpdate(nextProps: Readonly<IssueDesc>, nextState: Readonly<{}>, nextContext: any): boolean {
-    return this.props.title !== nextProps.title;
-  }
+interface IssueDesc {
+  item: CommonItemSummary;
+  type: ItemType;
+}
 
+export class IssueInfo extends Component<IssueDesc> {
   render() {
+    const item = this.props.item;
+
     return (
       <Box display="flex" flexDirection="row" borderColor="border.default" borderBottomWidth={1} borderBottomStyle="solid" sx={{ gap: 2 }} my={2} pb={2}>
         {/* Icon column */}
         <Box display="flex" flexDirection="column" py={1}>
-          <IssueOpenedIcon size="small" />
+          {this.props.type === ItemType.Issue ? <IssueOpenedIcon size="small" /> : <GitPullRequestIcon size="small" />}
         </Box>
 
         {/* Content column*/}
         <Box display="flex" flexDirection="column" flexGrow={1} className="min-width-zero" sx={{ gap: 1 }}>
-          <Box flexGrow="1" className="min-width-zero truncate-text">
-            <Link href={this.props.link} target="_blank" sx={{ fontWeight: "bold" }}>
-              {this.props.title}
+          <Box display="flex" sx={{ gap: 2 }}>
+            <Link href={item.web_url} target="_blank" sx={{ fontWeight: "bold" }} className="min-width-zero truncate-text">
+              <Box flexGrow="1" display="inline">
+                {item.references.short} {item.title}
+              </Box>
             </Link>
           </Box>
           <Box display="flex" sx={{ gap: 2 }}>
@@ -35,12 +41,36 @@ export default class IssueInfo extends Component<IssueDesc> {
         </Box>
 
         {/* Right side */}
-        <Box>
-          <Link target="_blank" href="https://gitlab.com/">
-            <Tooltip aria-label="Assignee: Nome Cognome" direction="nw" noDelay={true} sx={{ display: "block" }}>
-              <Avatar src="https://avatars.githubusercontent.com/primer" sx={{ display: "block" }} />
+        <Box display="flex" alignItems="flex-start" sx={{ gap: 2 }}>
+          {item.assignees.map((assigne) => (
+            <Tooltip key={assigne.id} aria-label={`Assignee: ${assigne.name}`} direction="nw" noDelay={true} sx={{ display: "block" }}>
+              <Link target="_blank" href={assigne.web_url}>
+                <Avatar src={assigne.avatar_url} sx={{ display: "block" }} />
+              </Link>
             </Tooltip>
-          </Link>
+          ))}
+          <Box>
+            <Tooltip aria-label="Comments" direction="nw" sx={{ whiteSpace: "nowrap" }}>
+              <CommentDiscussionIcon size="small" verticalAlign="middle" /> {item.user_notes_count}
+            </Tooltip>
+          </Box>
+          {this.props.type === ItemType.Issue && (item as IssueSummary).merge_requests_count > 0 && (
+            <Box>
+              <Tooltip aria-label="Merge requests" direction="nw" sx={{ whiteSpace: "nowrap" }}>
+                <GitPullRequestIcon size="small" verticalAlign="middle" /> {(item as IssueSummary).merge_requests_count}
+              </Tooltip>
+            </Box>
+          )}
+          <Box>
+            <Tooltip aria-label={`Up votes`} direction="nw" sx={{ whiteSpace: "nowrap" }}>
+              <ThumbsupIcon aria-label="Up votes" size="small" verticalAlign="middle" /> {item.upvotes}
+            </Tooltip>
+          </Box>
+          <Box>
+            <Tooltip aria-label={`Down votes`} direction="nw" sx={{ whiteSpace: "nowrap" }}>
+              <ThumbsdownIcon size="small" verticalAlign="middle" /> {item.downvotes}
+            </Tooltip>
+          </Box>
         </Box>
       </Box>
     );

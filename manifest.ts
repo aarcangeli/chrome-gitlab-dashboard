@@ -19,6 +19,8 @@ const manifest: chrome.runtime.ManifestV3 = {
       matches: ["*://*/*"],
     },
   ],
+  // optional permissions
+  host_permissions: ["http://*/", "https://*/"],
 };
 
 export default manifest;

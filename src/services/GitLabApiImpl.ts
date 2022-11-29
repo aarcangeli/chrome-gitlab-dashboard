@@ -1,5 +1,4 @@
-import { GitLabApi, GitLabApiError, GitLabUser, IssueSummary } from "@src/services/GitLabApi";
-import { waitFor } from "@testing-library/react";
+import { GitLabApi, GitLabApiError, GitLabUser, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
 
 class GitLabApiImpl implements GitLabApi {
   constructor(private host: string, private privateToken: string) {}
@@ -11,6 +10,16 @@ class GitLabApiImpl implements GitLabApi {
   async issues(assigneeId: number): Promise<IssueSummary[]> {
     return await this.invokeApi("GET", `/issues`, {
       assignee_id: assigneeId,
+      state: "opened",
+      // scope is required otherwise we get only issues created by the current user
+      scope: "all",
+    });
+  }
+
+  async mergeRequests(assigneeId: number): Promise<MergeRequestSummary[]> {
+    return await this.invokeApi("GET", `/merge_requests`, {
+      assignee_id: assigneeId,
+      state: "opened",
       // scope is required otherwise we get only issues created by the current user
       scope: "all",
     });
