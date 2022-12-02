@@ -2,7 +2,7 @@ import { CommonItemSummary, MergeRequestSummary } from "@src/services/GitLabApi"
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Heading, Link, Spinner } from "@primer/react";
 import { ChevronDownIcon, ChevronRightIcon } from "@primer/octicons-react";
-import { IssueInfo, ItemType } from "@pages/popup/IssueInfo";
+import { IssueInfo, ItemType } from "@src/components/IssueInfo";
 import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
 import { LabelService } from "@src/services/LabelService";
 

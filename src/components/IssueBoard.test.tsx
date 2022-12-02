@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { IssueBoard } from "@src/components/IssueBoard";
-import { ItemType } from "@pages/popup/IssueInfo";
+import { ItemType } from "@src/components/IssueInfo";
 import { CommonItemSummary } from "@src/services/GitLabApi";
 import { expect, test } from "@jest/globals";
 import preview from "jest-preview";

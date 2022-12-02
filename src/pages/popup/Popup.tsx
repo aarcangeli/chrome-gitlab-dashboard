@@ -1,7 +1,7 @@
 import React from "react";
 import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider } from "@primer/react";
 import { createGlobalStyle } from "styled-components";
-import { ItemType } from "@pages/popup/IssueInfo";
+import { ItemType } from "@src/components/IssueInfo";
 import { GearIcon, SyncIcon } from "@primer/octicons-react";
 import { GitLabApi, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
 import { makeGitLabApi } from "@src/services/GitLabApiImpl";
