@@ -65,6 +65,13 @@ export default class Popup extends React.Component<{}, State> {
     return this.gitLabApi.mergeRequests(this.storage.getCurrentUserId());
   }
 
+  async loadMergeRequestsToReview(): Promise<MergeRequestSummary[]> {
+    if (!this.storage.isAccessTokenSet()) {
+      return [];
+    }
+    return this.gitLabApi.mergeRequestsToReview(this.storage.getCurrentUserId());
+  }
+
   render() {
     return (
       <div>
@@ -97,6 +104,15 @@ export default class Popup extends React.Component<{}, State> {
                 id="user-mergeRequests"
                 type={ItemType.MergeRequest}
                 onLoad={() => this.loadMergeRequests()}
+                refreshVersion={this.state.refreshVersion}
+                storage={this.storage}
+              />
+
+              <IssueBoard
+                title="Review requests for you"
+                id="user-mergeRequestsToReview"
+                type={ItemType.MergeRequest}
+                onLoad={() => this.loadMergeRequestsToReview()}
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
               />

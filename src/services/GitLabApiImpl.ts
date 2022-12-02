@@ -25,6 +25,15 @@ class GitLabApiImpl implements GitLabApi {
     });
   }
 
+  async mergeRequestsToReview(assigneeId: number): Promise<MergeRequestSummary[]> {
+    return await this.invokeApi("GET", `/merge_requests`, {
+      reviewer_id: assigneeId,
+      state: "opened",
+      // scope is required otherwise we get only issues created by the current user
+      scope: "all",
+    });
+  }
+
   async currentUser(): Promise<GitLabUser> {
     return this.invokeApi("GET", `/user`);
   }

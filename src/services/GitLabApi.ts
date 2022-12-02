@@ -9,6 +9,7 @@ export interface GitLabApi {
   issues(assigneeId: number): Promise<IssueSummary[]>;
 
   mergeRequests(assigneeId: number): Promise<MergeRequestSummary[]>;
+  mergeRequestsToReview(assigneeId: number): Promise<MergeRequestSummary[]>;
 
   currentUser(): Promise<GitLabUser>;
 }
