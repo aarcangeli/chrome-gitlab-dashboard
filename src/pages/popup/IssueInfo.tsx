@@ -48,9 +48,9 @@ export function IssueInfo(props: Props) {
             </Box>
           </Link>
         </Box>
-        <Box display="flex" sx={{ gap: 2 }}>
+        <Box display="flex" sx={{ gap: 2 }} flexWrap="wrap">
           {item.labels.map((label) => (
-            <IssueLabelToken key={label} text={label} fillColor={labelColors[label]} />
+            <IssueLabelToken key={label} text={label} fillColor={labelColors[label]} size="small" />
           ))}
         </Box>
       </Box>

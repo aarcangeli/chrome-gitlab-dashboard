@@ -11,7 +11,7 @@ const CACHE_KEY = new CacheKey<ProjectLabels[]>("labels", []);
 const TIMEOUT_LABELS = 1000 * 60 * 60 * 10; // 10 minutes
 
 export class LabelService {
-  private pendingLabels = new Map<string, Promise<Label[]>>();
+  private pendingLabels = new Map<number, Promise<Label[]>>();
 
   constructor(private readonly api: GitLabApi, private readonly storage: PersistentStorage) {
     storage.getCache(CACHE_KEY);
@@ -22,10 +22,11 @@ export class LabelService {
     let projectLabels = this.storage.getCache(CACHE_KEY).find((projectLabels) => projectLabels.projectId === projectId);
     if (!projectLabels || projectLabels.lastUpdated < Date.now() - TIMEOUT_LABELS) {
       // find in pending requests, or create a new one
-      let pending = this.pendingLabels.get(projectId.toString());
+      let pending = this.pendingLabels.get(projectId);
+      const mustCache = !pending;
       if (!pending) {
-        pending = this.api.getProjectLabels(projectId, 1, 1000);
-        this.pendingLabels.set(projectId.toString(), pending);
+        pending = this.loadMethods(projectId);
+        this.pendingLabels.set(projectId, pending);
       }
 
       // load labels
@@ -33,15 +34,32 @@ export class LabelService {
       projectLabels = { labels: allLabels, projectId, lastUpdated: Date.now() };
 
       // update cache
-      this.cacheValue(projectLabels);
+      if (mustCache) {
+        this.cacheValue(projectLabels);
+      }
     }
 
-    return projectLabels.labels.find((label) => label.name === labelName)?.color ?? "";
+    return projectLabels.labels.find((label) => label.name === labelName)?.color;
+  }
+
+  private async loadMethods(projectId: number): Promise<Label[]> {
+    const allLabels: Label[] = [];
+    let page = 1;
+    // eslint-disable-next-line
+    while (true) {
+      const labels = await this.api.getProjectLabels(projectId, page, 100);
+      allLabels.push(...labels);
+      if (labels.length < 100) {
+        break;
+      }
+      page++;
+    }
+    return allLabels;
   }
 
   private cacheValue(projectLabels: ProjectLabels) {
     const cache = this.storage.getCache(CACHE_KEY);
-    const index = cache.findIndex((projectLabels) => projectLabels.projectId === projectLabels.projectId);
+    const index = cache.findIndex((it) => projectLabels.projectId === it.projectId);
     if (index >= 0) {
       cache[index] = projectLabels;
     } else {
