@@ -3,10 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Heading, Link, Spinner } from "@primer/react";
 import { ChevronDownIcon, ChevronRightIcon } from "@primer/octicons-react";
 import { IssueInfo, ItemType } from "@pages/popup/IssueInfo";
-import { CacheKey, CacheStorage } from "@src/services/CacheStorage";
+import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
 
 interface Props {
-  isInitiallyExpanded?: boolean;
   title: string;
   id?: string;
   type: ItemType;
@@ -14,15 +13,22 @@ interface Props {
 
   /** The component is updated everytime this value is changed */
   refreshVersion?: number;
+
+  // services
+  storage: PersistentStorage;
 }
 
 export function IssueBoard(props: Props) {
   const cacheKey = useRef(new CacheKey<MergeRequestSummary[]>(props.id, []));
-  const cacheStorage = useRef(new CacheStorage());
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(props.isInitiallyExpanded ?? true);
-  const [issues, setIssues] = useState<CommonItemSummary[]>(() => cacheStorage.current.get(cacheKey.current));
+  const [isExpanded, setIsExpanded] = useState(() => props.storage.getFlag(`isExpanded-${props.id}`, true));
+  const [issues, setIssues] = useState<CommonItemSummary[]>(() => props.storage.getCache(cacheKey.current));
+
+  function toggleExpanded() {
+    setIsExpanded(!isExpanded);
+    props.storage.setFlag(`isExpanded-${props.id}`, !isExpanded);
+  }
 
   useEffect(() => {
     let valid = true;
@@ -32,7 +38,7 @@ export function IssueBoard(props: Props) {
       if (valid) {
         setIssues(data);
         setIsLoading(false);
-        cacheStorage.current.set(cacheKey.current, data);
+        props.storage.setCache(cacheKey.current, data);
       }
     });
 
@@ -45,7 +51,7 @@ export function IssueBoard(props: Props) {
   return (
     <>
       <Heading sx={{ fontSize: 1, mb: 2 }}>
-        <Link as="button" muted={true} onClick={() => setIsExpanded(!isExpanded)}>
+        <Link as="button" muted={true} onClick={toggleExpanded}>
           {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />} {props.title} ({issues.length})
         </Link>
         {isLoading && (

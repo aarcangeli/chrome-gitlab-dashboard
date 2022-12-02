@@ -4,7 +4,8 @@ import { ItemType } from "@pages/popup/IssueInfo";
 import { CommonItemSummary } from "@src/services/GitLabApi";
 import { expect, test } from "@jest/globals";
 import preview from "jest-preview";
-import { act, Simulate } from "react-dom/test-utils";
+import { act } from "react-dom/test-utils";
+import { PersistentStorage } from "@src/services/PersistentStorage";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,7 +15,7 @@ describe("IssueBoard", () => {
   test("ensure the component is spawned", async () => {
     // setup
     await act(async () => {
-      render(<IssueBoard title="Test title" type={ItemType.Issue} onLoad={async () => []} />);
+      render(<IssueBoard title="Test title" type={ItemType.Issue} onLoad={async () => []} storage={new PersistentStorage()} />);
     });
 
     // then
@@ -32,7 +33,7 @@ describe("IssueBoard", () => {
 
     // create a mock issue board
     await act(async () => {
-      render(<IssueBoard title="Title" type={ItemType.Issue} onLoad={mockLoader} />);
+      render(<IssueBoard title="Title" type={ItemType.Issue} onLoad={mockLoader} storage={new PersistentStorage()} />);
     });
     preview.debug();
     await sleep(100);

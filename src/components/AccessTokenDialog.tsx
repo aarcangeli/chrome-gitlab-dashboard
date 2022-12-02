@@ -1,12 +1,12 @@
 import React, { useId, useRef, useState } from "react";
 import { Box, Button, Dialog, FormControl, Link, Spinner, TextInput } from "@primer/react";
-import { PreferenceStorage } from "@src/services/PreferenceStorage";
+import { PersistentStorage } from "@src/services/PersistentStorage";
 import { makeGitLabApi } from "@src/services/GitLabApiImpl";
 import { GitLabUser } from "@src/services/GitLabApi";
 
 class AccessTokenDialogProps {
   isInitiallyOpen? = false;
-  storage: PreferenceStorage;
+  storage: PersistentStorage;
   onSaved?: (gitLabUser: GitLabUser) => void;
 }
 
