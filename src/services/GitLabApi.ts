@@ -12,6 +12,13 @@ export interface GitLabApi {
   mergeRequestsToReview(assigneeId: number): Promise<MergeRequestSummary[]>;
 
   currentUser(): Promise<GitLabUser>;
+
+  /**
+   * @param projectId the project id
+   * @param page page number, starting at 1
+   * @param perPage number of items per page
+   */
+  getProjectLabels(projectId: number, page: number, perPage: number): Promise<Label[]>;
 }
 
 /**
@@ -28,6 +35,8 @@ export interface CommonItemSummary {
 
   author: GitLabUser;
   assignees: GitLabUser[];
+
+  labels: string[];
 
   upvotes: number;
   downvotes: number;
@@ -64,6 +73,18 @@ export interface GitLabUser {
   state: string;
   avatar_url: string;
   web_url: string;
+}
+
+export interface Label {
+  id: number;
+  name: string;
+  description: string;
+  description_html: string;
+  text_color: string;
+  color: string;
+  subscribed: boolean;
+  priority: number;
+  is_project_label: boolean;
 }
 
 export class GitLabApiError extends Error {

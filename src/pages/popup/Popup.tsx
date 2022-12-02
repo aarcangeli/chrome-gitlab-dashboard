@@ -8,6 +8,7 @@ import { makeGitLabApi } from "@src/services/GitLabApiImpl";
 import AccessTokenDialog from "@src/components/AccessTokenDialog";
 import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
 import { IssueBoard } from "@src/components/IssueBoard";
+import { LabelService } from "@src/services/LabelService";
 
 // Apply global styles
 // Background color must be set manually (https://github.com/primer/react/issues/2370#issuecomment-1259357065)
@@ -26,6 +27,7 @@ const MERGE_REQUESTS_CACHE = new CacheKey<MergeRequestSummary[]>("user-mergeRequ
 export default class Popup extends React.Component<{}, State> {
   private readonly storage: PersistentStorage;
   private gitLabApi: GitLabApi;
+  private labelService: LabelService;
 
   constructor(props) {
     super(props);
@@ -44,6 +46,7 @@ export default class Popup extends React.Component<{}, State> {
 
   refreshToken() {
     this.gitLabApi = makeGitLabApi(this.storage.getHost(), this.storage.getAccessToken());
+    this.labelService = new LabelService(this.gitLabApi, this.storage);
     this.setState({ refreshVersion: this.state.refreshVersion + 1 });
   }
 
@@ -97,6 +100,7 @@ export default class Popup extends React.Component<{}, State> {
                 onLoad={this.loadIssues}
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
+                labelService={this.labelService}
               />
 
               <IssueBoard
@@ -106,6 +110,7 @@ export default class Popup extends React.Component<{}, State> {
                 onLoad={() => this.loadMergeRequests()}
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
+                labelService={this.labelService}
               />
 
               <IssueBoard
@@ -115,6 +120,7 @@ export default class Popup extends React.Component<{}, State> {
                 onLoad={() => this.loadMergeRequestsToReview()}
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
+                labelService={this.labelService}
               />
 
               <AccessTokenDialog isInitiallyOpen={!this.storage.isAccessTokenSet()} storage={this.storage} onSaved={this.refreshToken} />

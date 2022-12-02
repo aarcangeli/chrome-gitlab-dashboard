@@ -4,6 +4,7 @@ import { Box, Heading, Link, Spinner } from "@primer/react";
 import { ChevronDownIcon, ChevronRightIcon } from "@primer/octicons-react";
 import { IssueInfo, ItemType } from "@pages/popup/IssueInfo";
 import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
+import { LabelService } from "@src/services/LabelService";
 
 interface Props {
   title: string;
@@ -16,6 +17,7 @@ interface Props {
 
   // services
   storage: PersistentStorage;
+  labelService?: LabelService;
 }
 
 export function IssueBoard(props: Props) {
@@ -64,7 +66,7 @@ export function IssueBoard(props: Props) {
       {isExpanded && (
         <Box pb={2}>
           {issues.map((issue) => (
-            <IssueInfo key={issue.id} type={props.type} item={issue} />
+            <IssueInfo key={issue.id} type={props.type} item={issue} labelService={props.labelService} />
           ))}
         </Box>
       )}

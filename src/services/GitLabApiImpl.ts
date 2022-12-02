@@ -1,4 +1,4 @@
-import { GitLabApi, GitLabApiError, GitLabUser, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
+import { GitLabApi, GitLabApiError, GitLabUser, IssueSummary, Label, MergeRequestSummary } from "@src/services/GitLabApi";
 
 class GitLabApiImpl implements GitLabApi {
   constructor(private host: string, private privateToken: string) {}
@@ -36,6 +36,13 @@ class GitLabApiImpl implements GitLabApi {
 
   async currentUser(): Promise<GitLabUser> {
     return this.invokeApi("GET", `/user`);
+  }
+
+  async getProjectLabels(projectId: number, page: number, perPage: number): Promise<Label[]> {
+    return await this.invokeApi("GET", `/projects/${projectId}/labels`, {
+      page: page,
+      per_page: perPage,
+    });
   }
 
   private async invokeApi(method: string, path: string, query: Record<string, any> = {}, body: any = {}): Promise<any> {
