@@ -43,7 +43,16 @@ export function IssueInfo(props: Props) {
   }
 
   return (
-    <Box className="issue" display="flex" flexDirection="row" borderColor="border.default" borderBottomWidth={1} borderBottomStyle="solid" sx={{ gap: 2 }} mx={-2} px={2} py={2}>
+    <Box
+      className="hover-bg remove-border-last-item"
+      display="flex"
+      flexDirection="row"
+      borderColor="border.default"
+      borderBottomWidth={1}
+      borderBottomStyle="solid"
+      sx={{ gap: 2 }}
+      p={2}
+    >
       {/* Icon column */}
       <Box display="flex" flexDirection="column" py={1}>
         {props.type === ItemType.Issue ? <IssueOpenedIcon size="small" /> : <GitPullRequestIcon size="small" />}

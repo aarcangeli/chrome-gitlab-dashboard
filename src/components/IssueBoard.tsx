@@ -66,7 +66,7 @@ export function IssueBoard(props: Props) {
       </Heading>
 
       {isExpanded && (
-        <Box pb={2}>
+        <Box mb={2} sx={{ borderRadius: 2 }} borderColor="border.default" borderWidth={1} borderStyle="solid">
           {issues.map((issue) => (
             <IssueInfo key={issue.id} type={props.type} item={issue} labelService={props.labelService} bookmarkManager={props.bookmarkManager} />
           ))}

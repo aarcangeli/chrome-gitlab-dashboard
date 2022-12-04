@@ -1,0 +1,8 @@
+.remove-border-last-item:last-child {
+  border: none;
+}
+
+.hover-bg:hover {
+  transition: background 0.2s ease;
+  background: rgba(0, 0, 0, 0.3);
+}

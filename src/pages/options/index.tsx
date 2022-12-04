@@ -1,9 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Options from "@pages/options/Options";
+import { BaseStyles, themeGet, ThemeProvider } from "@primer/react";
+import { Options } from "@pages/options/Options";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 import { createGlobalStyle } from "styled-components";
-import { BaseStyles, themeGet, ThemeProvider } from "@primer/react";
+import "@src/style/scrollbar.scss";
+import "@src/style/global-style.scss";
 
 refreshOnUpdate("pages/options");
 
