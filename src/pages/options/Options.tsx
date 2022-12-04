@@ -1,6 +1,18 @@
+import { Heading, Pagehead, PageLayout } from "@primer/react";
 import React from "react";
-import "@pages/options/Options.css";
 
 export default function Options() {
-  return <div className="OptionsContainer">Options</div>;
+  return (
+    <PageLayout>
+      {/* Left column */}
+      <PageLayout.Pane position="start"></PageLayout.Pane>
+
+      {/* Content */}
+      <PageLayout.Content>
+        <Pagehead>
+          <Heading>Options</Heading>
+        </Pagehead>
+      </PageLayout.Content>
+    </PageLayout>
+  );
 }

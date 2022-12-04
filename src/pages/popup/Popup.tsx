@@ -1,6 +1,5 @@
 import React from "react";
-import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider } from "@primer/react";
-import { createGlobalStyle } from "styled-components";
+import { Box, Heading, Link } from "@primer/react";
 import { ItemType } from "@src/components/IssueInfo";
 import { GearIcon, SyncIcon } from "@primer/octicons-react";
 import { GitLabApi, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
@@ -11,14 +10,6 @@ import { IssueBoard } from "@src/components/IssueBoard";
 import { LabelService } from "@src/services/LabelService";
 import { BookmarkManager } from "@src/services/BookmarkManager";
 import { IssueDatabase } from "@src/services/IssueDatabase";
-
-// Apply global styles
-// Background color must be set manually (https://github.com/primer/react/issues/2370#issuecomment-1259357065)
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${themeGet("colors.canvas.default")};
-  }
-`;
 
 class State {
   refreshVersion = 0;
@@ -82,60 +73,52 @@ export default class Popup extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="root-node">
-        <ThemeProvider colorMode="auto">
-          <BaseStyles>
-            <GlobalStyle />
+      <Box p={2}>
+        <Heading as="h1" sx={{ fontSize: 3 }}>
+          <Link target="_blank" href="/src/pages/options/index.html">
+            <GearIcon verticalAlign="unset" />
+          </Link>{" "}
+          GitLab Dashboard{" "}
+          <Link as="button" onClick={this.refreshBoard}>
+            <SyncIcon size="small" verticalAlign="unset" />
+          </Link>
+        </Heading>
 
-            <Box p={2}>
-              <Heading as="h1" sx={{ fontSize: 3 }}>
-                <Link target="_blank" href="/src/pages/options/index.html">
-                  <GearIcon verticalAlign="unset" />
-                </Link>{" "}
-                GitLab Dashboard{" "}
-                <Link as="button" onClick={this.refreshBoard}>
-                  <SyncIcon size="small" verticalAlign="unset" />
-                </Link>
-              </Heading>
+        <IssueBoard
+          title="Issues assigned to you"
+          id="user-issues"
+          type={ItemType.Issue}
+          onLoad={this.loadIssues}
+          refreshVersion={this.state.refreshVersion}
+          storage={this.storage}
+          labelService={this.labelService}
+          bookmarkManager={this.bookmarkManager}
+        />
 
-              <IssueBoard
-                title="Issues assigned to you"
-                id="user-issues"
-                type={ItemType.Issue}
-                onLoad={this.loadIssues}
-                refreshVersion={this.state.refreshVersion}
-                storage={this.storage}
-                labelService={this.labelService}
-                bookmarkManager={this.bookmarkManager}
-              />
+        <IssueBoard
+          title="Merge Request assigned to you"
+          id="user-mergeRequests"
+          type={ItemType.MergeRequest}
+          onLoad={() => this.loadMergeRequests()}
+          refreshVersion={this.state.refreshVersion}
+          storage={this.storage}
+          labelService={this.labelService}
+          bookmarkManager={this.bookmarkManager}
+        />
 
-              <IssueBoard
-                title="Merge Request assigned to you"
-                id="user-mergeRequests"
-                type={ItemType.MergeRequest}
-                onLoad={() => this.loadMergeRequests()}
-                refreshVersion={this.state.refreshVersion}
-                storage={this.storage}
-                labelService={this.labelService}
-                bookmarkManager={this.bookmarkManager}
-              />
+        <IssueBoard
+          title="Review requests for you"
+          id="user-mergeRequestsToReview"
+          type={ItemType.MergeRequest}
+          onLoad={() => this.loadMergeRequestsToReview()}
+          refreshVersion={this.state.refreshVersion}
+          storage={this.storage}
+          labelService={this.labelService}
+          bookmarkManager={this.bookmarkManager}
+        />
 
-              <IssueBoard
-                title="Review requests for you"
-                id="user-mergeRequestsToReview"
-                type={ItemType.MergeRequest}
-                onLoad={() => this.loadMergeRequestsToReview()}
-                refreshVersion={this.state.refreshVersion}
-                storage={this.storage}
-                labelService={this.labelService}
-                bookmarkManager={this.bookmarkManager}
-              />
-
-              <AccessTokenDialog isInitiallyOpen={!this.storage.isAccessTokenSet()} storage={this.storage} onSaved={this.refreshToken} />
-            </Box>
-          </BaseStyles>
-        </ThemeProvider>
-      </div>
+        <AccessTokenDialog isInitiallyOpen={!this.storage.isAccessTokenSet()} storage={this.storage} onSaved={this.refreshToken} />
+      </Box>
     );
   }
 }
