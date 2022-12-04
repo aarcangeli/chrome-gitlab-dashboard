@@ -4,7 +4,7 @@ import "./IssueInfo.scss";
 import { CommonItemSummary, IssueSummary } from "@src/services/GitLabApi";
 import { LabelService } from "@src/services/LabelService";
 import { useEffect, useState } from "react";
-import { BookmarkButton } from "@src/pages/options/BookmarkButton";
+import { BookmarkButton } from "@src/components/BookmarkButton";
 import { BookmarkManager } from "@src/services/BookmarkManager";
 
 export enum ItemType {
