@@ -57,4 +57,13 @@ export class PersistentStorage {
   setFlag(key: string, value: boolean): void {
     this.storage.setItem(key, String(value));
   }
+
+  get<T>(key: string, defaultValue: T): T {
+    const value = this.storage.getItem(key);
+    return value === null ? defaultValue : JSON.parse(value);
+  }
+
+  set<T>(key: string, value: T): void {
+    this.storage.setItem(key, JSON.stringify(value));
+  }
 }

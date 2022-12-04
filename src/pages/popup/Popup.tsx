@@ -1,14 +1,15 @@
 import React from "react";
-import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider } from "@primer/react";
+import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider, ActionMenu, ActionList, IconButton } from "@primer/react";
 import { createGlobalStyle } from "styled-components";
 import { ItemType } from "@src/components/IssueInfo";
-import { GearIcon, SyncIcon } from "@primer/octicons-react";
+import { GearIcon, SyncIcon, TriangleDownIcon } from "@primer/octicons-react";
 import { GitLabApi, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
 import { makeGitLabApi } from "@src/services/GitLabApiImpl";
 import AccessTokenDialog from "@src/components/AccessTokenDialog";
 import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
 import { IssueBoard } from "@src/components/IssueBoard";
 import { LabelService } from "@src/services/LabelService";
+import { BookmarkManager } from "@src/services/BookmarkManager";
 
 // Apply global styles
 // Background color must be set manually (https://github.com/primer/react/issues/2370#issuecomment-1259357065)
@@ -22,17 +23,17 @@ class State {
   refreshVersion = 0;
 }
 
-const MERGE_REQUESTS_CACHE = new CacheKey<MergeRequestSummary[]>("user-mergeRequests", []);
-
 export default class Popup extends React.Component<{}, State> {
   private readonly storage: PersistentStorage;
   private gitLabApi: GitLabApi;
   private labelService: LabelService;
+  private bookmarkManager: BookmarkManager;
 
   constructor(props) {
     super(props);
     this.storage = new PersistentStorage();
     this.state = new State();
+    this.bookmarkManager = new BookmarkManager(this.storage);
 
     this.refreshToken = this.refreshToken.bind(this);
     this.refreshBoard = this.refreshBoard.bind(this);
@@ -77,7 +78,7 @@ export default class Popup extends React.Component<{}, State> {
 
   render() {
     return (
-      <div>
+      <div className="root-node">
         <ThemeProvider colorMode="auto">
           <BaseStyles>
             <GlobalStyle />
@@ -101,6 +102,7 @@ export default class Popup extends React.Component<{}, State> {
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
                 labelService={this.labelService}
+                bookmarkManager={this.bookmarkManager}
               />
 
               <IssueBoard
@@ -111,6 +113,7 @@ export default class Popup extends React.Component<{}, State> {
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
                 labelService={this.labelService}
+                bookmarkManager={this.bookmarkManager}
               />
 
               <IssueBoard
@@ -121,6 +124,7 @@ export default class Popup extends React.Component<{}, State> {
                 refreshVersion={this.state.refreshVersion}
                 storage={this.storage}
                 labelService={this.labelService}
+                bookmarkManager={this.bookmarkManager}
               />
 
               <AccessTokenDialog isInitiallyOpen={!this.storage.isAccessTokenSet()} storage={this.storage} onSaved={this.refreshToken} />

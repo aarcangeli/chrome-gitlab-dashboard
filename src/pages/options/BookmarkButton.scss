@@ -1,0 +1,18 @@
+.book-mark-wrap {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.book-mark-wrap > svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+
+.book-mark-wrap > svg.hide {
+  transform: scale(0);
+}

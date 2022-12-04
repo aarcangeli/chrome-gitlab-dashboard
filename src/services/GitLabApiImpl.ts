@@ -13,6 +13,7 @@ class GitLabApiImpl implements GitLabApi {
       state: "opened",
       // scope is required otherwise we get only issues created by the current user
       scope: "all",
+      per_page: 100,
     });
   }
 
@@ -22,6 +23,7 @@ class GitLabApiImpl implements GitLabApi {
       state: "opened",
       // scope is required otherwise we get only issues created by the current user
       scope: "all",
+      per_page: 100,
     });
   }
 
@@ -31,6 +33,7 @@ class GitLabApiImpl implements GitLabApi {
       state: "opened",
       // scope is required otherwise we get only issues created by the current user
       scope: "all",
+      per_page: 100,
     });
   }
 

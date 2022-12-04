@@ -1,9 +1,11 @@
 import { Avatar, Box, IssueLabelToken, Link, Tooltip } from "@primer/react";
-import { CommentDiscussionIcon, GitPullRequestIcon, IssueOpenedIcon, ThumbsdownIcon, ThumbsupIcon } from "@primer/octicons-react";
+import { CommentDiscussionIcon, GitPullRequestIcon, IssueOpenedIcon, ThumbsdownIcon, ThumbsupIcon, BookmarkIcon } from "@primer/octicons-react";
 import "./IssueInfo.scss";
 import { CommonItemSummary, IssueSummary } from "@src/services/GitLabApi";
 import { LabelService } from "@src/services/LabelService";
 import { useEffect, useState } from "react";
+import { BookmarkButton } from "@src/pages/options/BookmarkButton";
+import { BookmarkManager } from "@src/services/BookmarkManager";
 
 export enum ItemType {
   Issue,
@@ -14,11 +16,14 @@ interface Props {
   item: CommonItemSummary;
   type: ItemType;
   labelService?: LabelService;
+  bookmarkManager?: BookmarkManager;
 }
 
 export function IssueInfo(props: Props) {
   const item = props.item;
   const [labelColors, setLabelColors] = useState<Record<string, string>>({});
+  const bookmarkId = `issue-${props.type}-${item.id}`;
+  const [bookmarked, setBookmarked] = useState(props.bookmarkManager?.isBookmarked(bookmarkId));
 
   useEffect(() => {
     if (props.labelService) {
@@ -32,8 +37,13 @@ export function IssueInfo(props: Props) {
     }
   }, []);
 
+  function toggleBookmark() {
+    setBookmarked(!bookmarked);
+    props.bookmarkManager?.setBookmarkState(bookmarkId, !bookmarked);
+  }
+
   return (
-    <Box display="flex" flexDirection="row" borderColor="border.default" borderBottomWidth={1} borderBottomStyle="solid" sx={{ gap: 2 }} my={2} pb={2}>
+    <Box className="issue" display="flex" flexDirection="row" borderColor="border.default" borderBottomWidth={1} borderBottomStyle="solid" sx={{ gap: 2 }} mx={-2} px={2} py={2}>
       {/* Icon column */}
       <Box display="flex" flexDirection="column" py={1}>
         {props.type === ItemType.Issue ? <IssueOpenedIcon size="small" /> : <GitPullRequestIcon size="small" />}
@@ -41,7 +51,8 @@ export function IssueInfo(props: Props) {
 
       {/* Content column*/}
       <Box display="flex" flexDirection="column" flexGrow={1} className="min-width-zero" sx={{ gap: 1 }}>
-        <Box display="flex" sx={{ gap: 2 }}>
+        <Box display="flex" sx={{ gap: 1, alignItems: "center" }}>
+          <BookmarkButton bookmarked={bookmarked} onClick={toggleBookmark} />
           <Link href={item.web_url} target="_blank" sx={{ fontWeight: "bold" }} className="min-width-zero truncate-text">
             <Box flexGrow="1" display="inline">
               {item.references.short} {item.title}
