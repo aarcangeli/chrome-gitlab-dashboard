@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "@pages/popup/index.scss";
+import "@pages/popup/scrollbar.scss";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 import Popup from "@pages/popup/Popup";
 
