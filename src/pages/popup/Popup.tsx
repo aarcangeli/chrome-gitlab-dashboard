@@ -1,15 +1,16 @@
 import React from "react";
-import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider, ActionMenu, ActionList, IconButton } from "@primer/react";
+import { BaseStyles, Box, Heading, Link, themeGet, ThemeProvider } from "@primer/react";
 import { createGlobalStyle } from "styled-components";
 import { ItemType } from "@src/components/IssueInfo";
-import { GearIcon, SyncIcon, TriangleDownIcon } from "@primer/octicons-react";
+import { GearIcon, SyncIcon } from "@primer/octicons-react";
 import { GitLabApi, IssueSummary, MergeRequestSummary } from "@src/services/GitLabApi";
 import { makeGitLabApi } from "@src/services/GitLabApiImpl";
 import AccessTokenDialog from "@src/components/AccessTokenDialog";
-import { CacheKey, PersistentStorage } from "@src/services/PersistentStorage";
+import { PersistentStorage } from "@src/services/PersistentStorage";
 import { IssueBoard } from "@src/components/IssueBoard";
 import { LabelService } from "@src/services/LabelService";
 import { BookmarkManager } from "@src/services/BookmarkManager";
+import { IssueDatabase } from "@src/services/IssueDatabase";
 
 // Apply global styles
 // Background color must be set manually (https://github.com/primer/react/issues/2370#issuecomment-1259357065)
@@ -27,7 +28,8 @@ export default class Popup extends React.Component<{}, State> {
   private readonly storage: PersistentStorage;
   private gitLabApi: GitLabApi;
   private labelService: LabelService;
-  private bookmarkManager: BookmarkManager;
+  private readonly bookmarkManager: BookmarkManager;
+  private readonly issueIndex = new IssueDatabase();
 
   constructor(props) {
     super(props);
@@ -39,6 +41,8 @@ export default class Popup extends React.Component<{}, State> {
     this.refreshBoard = this.refreshBoard.bind(this);
     this.loadIssues = this.loadIssues.bind(this);
     this.refreshToken = this.refreshToken.bind(this);
+
+    this.issueIndex.getAllIssues().then((issues) => console.log(issues));
 
     if (this.storage.isAccessTokenSet()) {
       this.refreshToken();
