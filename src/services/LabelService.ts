@@ -9,6 +9,7 @@ interface ProjectLabels {
 
 const CACHE_KEY = new CacheKey<ProjectLabels[]>("labels", []);
 const TIMEOUT_LABELS = 1000 * 60 * 60 * 10; // 10 minutes
+const LABELS_PER_PAGE = 100;
 
 export class LabelService {
   private pendingLabels = new Map<number, Promise<Label[]>>();
@@ -47,9 +48,9 @@ export class LabelService {
     let page = 1;
     // eslint-disable-next-line
     while (true) {
-      const labels = await this.api.getProjectLabels(projectId, page, 100);
+      const labels = await this.api.getProjectLabels(projectId, { page, perPage: LABELS_PER_PAGE });
       allLabels.push(...labels);
-      if (labels.length < 100) {
+      if (labels.length < LABELS_PER_PAGE) {
         break;
       }
       page++;

@@ -1,10 +1,15 @@
+import { GitLabProject } from "@src/services/dao";
+
 /**
  * Gives direct access to the GitLab API.
  * All requests are authenticated with the user's access token.
  */
 
 export interface GitLabApi {
-  projects(): Promise<unknown>;
+  /**
+   * Get a list of projects the current user is a member of.
+   */
+  projects(query: string | undefined, options: QueryOptions): Promise<GitLabProject[]>;
 
   issues(assigneeId: number): Promise<IssueSummary[]>;
 
@@ -18,7 +23,16 @@ export interface GitLabApi {
    * @param page page number, starting at 1
    * @param perPage number of items per page
    */
-  getProjectLabels(projectId: number, page: number, perPage: number): Promise<Label[]>;
+  getProjectLabels(projectId: number, options: QueryOptions): Promise<Label[]>;
+}
+
+export interface QueryOptions {
+  /** page number, starting at 1 */
+  page: number;
+  /** number of items per page */
+  perPage: number;
+  /** abort signal to cancel the request */
+  signal?: AbortSignal;
 }
 
 /**
