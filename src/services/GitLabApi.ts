@@ -1,4 +1,4 @@
-import { GitLabProject } from "@src/services/dao";
+import { GitLabProject, MinimalProject } from "@src/services/dao";
 
 /**
  * Gives direct access to the GitLab API.
@@ -9,26 +9,31 @@ export interface GitLabApi {
   /**
    * Get a list of projects the current user is a member of.
    */
-  projects(query: string | undefined, options: QueryOptions): Promise<GitLabProject[]>;
+  projects(query: string | undefined, options: QueryOptions): Promise<PaginatedResult<GitLabProject>>;
+  projectByIds(id: number[], signal: AbortSignal): Promise<MinimalProject[]>;
 
-  issues(assigneeId: number): Promise<IssueSummary[]>;
+  issues(assigneeId: number): Promise<PaginatedResult<IssueSummary>>;
 
-  mergeRequests(assigneeId: number): Promise<MergeRequestSummary[]>;
-  mergeRequestsToReview(assigneeId: number): Promise<MergeRequestSummary[]>;
+  mergeRequests(assigneeId: number): Promise<PaginatedResult<MergeRequestSummary>>;
+  mergeRequestsToReview(assigneeId: number): Promise<PaginatedResult<MergeRequestSummary>>;
 
   currentUser(): Promise<GitLabUser>;
 
+  fetchNextPage<T>(page: PaginatedResult<T>, signal?: AbortSignal): Promise<PaginatedResult<T>>;
+
   /**
    * @param projectId the project id
-   * @param page page number, starting at 1
-   * @param perPage number of items per page
+   * @param options the query options
    */
-  getProjectLabels(projectId: number, options: QueryOptions): Promise<Label[]>;
+  getProjectLabels(projectId: number, options: QueryOptions): Promise<PaginatedResult<Label>>;
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  nextPageLink?: string;
 }
 
 export interface QueryOptions {
-  /** page number, starting at 1 */
-  page: number;
   /** number of items per page */
   perPage: number;
   /** abort signal to cancel the request */

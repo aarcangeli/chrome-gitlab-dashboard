@@ -1,0 +1,23 @@
+{
+  "name": "GitLab GraphQL Schema",
+  "schemaPath": "gitlab-schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Unauthenticated GraphQL Endpoint": {
+        "url": "https://gitlab.com/api/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": true
+      },
+      "GraphQL Endpoint": {
+        "url": "https://gitlab.com/api/graphql",
+        "headers": {
+          "Authorization": "Bearer ${env:GITLAB_TOKEN}",
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": true
+      }
+    }
+  }
+}

@@ -33,8 +33,6 @@ export default class Popup extends React.Component<{}, State> {
     this.loadIssues = this.loadIssues.bind(this);
     this.refreshToken = this.refreshToken.bind(this);
 
-    this.issueIndex.getAllIssues().then((issues) => console.log(issues));
-
     if (this.storage.isAccessTokenSet()) {
       this.refreshToken();
     }
@@ -54,21 +52,21 @@ export default class Popup extends React.Component<{}, State> {
     if (!this.storage.isAccessTokenSet()) {
       return [];
     }
-    return this.gitLabApi.issues(this.storage.getCurrentUserId());
+    return (await this.gitLabApi.issues(this.storage.getCurrentUserId())).items;
   }
 
   async loadMergeRequests(): Promise<MergeRequestSummary[]> {
     if (!this.storage.isAccessTokenSet()) {
       return [];
     }
-    return this.gitLabApi.mergeRequests(this.storage.getCurrentUserId());
+    return (await this.gitLabApi.mergeRequests(this.storage.getCurrentUserId())).items;
   }
 
   async loadMergeRequestsToReview(): Promise<MergeRequestSummary[]> {
     if (!this.storage.isAccessTokenSet()) {
       return [];
     }
-    return this.gitLabApi.mergeRequestsToReview(this.storage.getCurrentUserId());
+    return (await this.gitLabApi.mergeRequestsToReview(this.storage.getCurrentUserId())).items;
   }
 
   render() {

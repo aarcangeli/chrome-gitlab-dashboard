@@ -29,6 +29,16 @@ export interface Permissions {
   group_access?: Permissions;
 }
 
+/**
+ * Project used in watched projects UI
+ */
+export interface MinimalProject {
+  id: number;
+  avatar_url: string;
+  name_with_namespace: string;
+  web_url: string;
+}
+
 export interface GitLabProject {
   id: number;
   description: string;

@@ -1,6 +1,9 @@
+import { GitLabProject, MinimalProject } from "@src/services/dao";
+
 const K_HOST = "host";
 const K_TOKEN = "accessToken";
 const K_CURRENT_USER_ID = "currentUserId";
+const K_WATCHED_PROJECTS = "watchedProjects";
 
 export class CacheKey<T> {
   public readonly key: string;
@@ -58,6 +61,22 @@ export class PersistentStorage {
     this.storage.setItem(key, String(value));
   }
 
+  putWatchedProjects(...project: MinimalProject[]) {
+    const projects = this.get(K_WATCHED_PROJECTS, []);
+    project.forEach((p) => this.findOrAddById(projects, p));
+    this.set(K_WATCHED_PROJECTS, projects);
+  }
+
+  removeWatchedProjects(...projectIds: number[]) {
+    const projects = this.get(K_WATCHED_PROJECTS, []);
+    projectIds.forEach((id) => this.removeById(projects, id));
+    this.set(K_WATCHED_PROJECTS, projects);
+  }
+
+  getWatchedProjects(): MinimalProject[] {
+    return this.get(K_WATCHED_PROJECTS, []);
+  }
+
   get<T>(key: string, defaultValue: T): T {
     const value = this.storage.getItem(key);
     return value === null ? defaultValue : JSON.parse(value);
@@ -65,5 +84,21 @@ export class PersistentStorage {
 
   set<T>(key: string, value: T): void {
     this.storage.setItem(key, JSON.stringify(value));
+  }
+
+  private findOrAddById(array: { id: number }[], value: { id: number }) {
+    const index = array.findIndex((p) => p.id === value.id);
+    if (index === -1) {
+      array.push(value);
+    } else {
+      array[index] = value;
+    }
+  }
+
+  private removeById(array: { id: number }[], id: number) {
+    const index = array.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      array.splice(index, 1);
+    }
   }
 }

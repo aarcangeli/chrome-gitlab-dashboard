@@ -45,15 +45,12 @@ export class LabelService {
 
   private async loadMethods(projectId: number): Promise<Label[]> {
     const allLabels: Label[] = [];
-    let page = 1;
-    // eslint-disable-next-line
-    while (true) {
-      const labels = await this.api.getProjectLabels(projectId, { page, perPage: LABELS_PER_PAGE });
-      allLabels.push(...labels);
-      if (labels.length < LABELS_PER_PAGE) {
-        break;
-      }
-      page++;
+    let result = await this.api.getProjectLabels(projectId, { perPage: LABELS_PER_PAGE });
+    console.log("Loaded labels", result);
+    allLabels.push(...result.items);
+    while (result.nextPageLink) {
+      result = await this.api.fetchNextPage(result);
+      allLabels.push(...result.items);
     }
     return allLabels;
   }
