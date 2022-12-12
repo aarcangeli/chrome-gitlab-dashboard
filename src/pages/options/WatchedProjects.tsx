@@ -1,9 +1,9 @@
 import { ActionList, Avatar, Box, FormControl, Heading, Link, Spinner, TextInput } from "@primer/react";
 import { LinkExternalIcon, RubyIcon, SearchIcon } from "@primer/octicons-react";
-import { GitLabApi, PaginatedResult } from "@src/services/GitLabApi";
+import { GitLabApi, GitLabProject, PaginatedResult } from "@src/services/GitLabApi";
 import { PersistentStorage } from "@src/services/PersistentStorage";
 import { useCallback, useEffect, useState } from "react";
-import { GitLabProject, MinimalProject } from "@src/services/dao";
+import { MinimalProject } from "@src/services/dao";
 import { usePagination } from "@src/utils/usePagination";
 import { useDebounce } from "@src/utils/useDebounce";
 import { splitArray } from "@src/utils/splitArray";

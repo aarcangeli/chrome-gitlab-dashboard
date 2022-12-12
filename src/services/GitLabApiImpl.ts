@@ -1,6 +1,6 @@
-import { GitLabApi, GitLabApiError, GitLabUser, IssueSummary, Label, MergeRequestSummary, PaginatedResult, QueryOptions } from "@src/services/GitLabApi";
+import { GitLabApi, GitLabApiError, GitLabProject, GitLabUser, IssueSummary, Label, MergeRequestSummary, PaginatedResult, QueryOptions } from "@src/services/GitLabApi";
 import { gql, GraphQLClient } from "graphql-request";
-import { GitLabProject, MinimalProject } from "@src/services/dao";
+import { MinimalProject } from "@src/services/dao";
 
 class GitLabApiImpl implements GitLabApi {
   constructor(private host: string, private privateToken: string) {}
@@ -49,18 +49,6 @@ class GitLabApiImpl implements GitLabApi {
       signal,
     });
   }
-
-  // async projectsById(id: number[], options: QueryOptions): Promise<GitLabProject[]> {
-  //   return await this.invokeApi("GET", `/projects`, options.signal, {
-  //     membership: "true",
-  //     sort: "desc",
-  //     order_by: "updated_at",
-  //     search: query,
-  //     // Pagination
-  //     page: options.page,
-  //     per_page: options.perPage,
-  //   });
-  // }
 
   async issues(assigneeId: number): Promise<PaginatedResult<IssueSummary>> {
     return await this.invokePaginatedApi(`/issues`, null, {

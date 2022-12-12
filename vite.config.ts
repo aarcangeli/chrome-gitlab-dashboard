@@ -33,12 +33,17 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(pagesDir, "background", "index.ts"),
+        contentScript: resolve(pagesDir, "contentScript", "content-script-loader.ts"),
+        contentScriptLoaded: resolve(pagesDir, "contentScript", "index.tsx"),
+        contentScriptDemo: resolve(pagesDir, "contentScript", "demo.html"),
         popup: resolve(pagesDir, "popup", "index.html"),
         options: resolve(pagesDir, "options", "index.html"),
       },
       output: {
         entryFileNames: "src/pages/[name]/index.js",
         chunkFileNames: isDev ? "assets/js/[name].js" : "assets/js/[name].[hash].js",
+        preserveModules: false,
+        esModule: false,
         assetFileNames: (assetInfo) => {
           const { dir, name: _name } = path.parse(assetInfo.name);
           const assetFolder = getLastElement(dir.split("/"));

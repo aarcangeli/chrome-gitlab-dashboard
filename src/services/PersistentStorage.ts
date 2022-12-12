@@ -1,4 +1,4 @@
-import { GitLabProject, MinimalProject } from "@src/services/dao";
+import { MinimalProject } from "@src/services/dao";
 
 const K_HOST = "host";
 const K_TOKEN = "accessToken";
@@ -61,20 +61,26 @@ export class PersistentStorage {
     this.storage.setItem(key, String(value));
   }
 
+  getWatchedProjects(): MinimalProject[] {
+    return this.get(K_WATCHED_PROJECTS, []);
+  }
+
   putWatchedProjects(...project: MinimalProject[]) {
     const projects = this.get(K_WATCHED_PROJECTS, []);
     project.forEach((p) => this.findOrAddById(projects, p));
-    this.set(K_WATCHED_PROJECTS, projects);
+    this.setWatchedProjects(projects);
   }
 
   removeWatchedProjects(...projectIds: number[]) {
     const projects = this.get(K_WATCHED_PROJECTS, []);
     projectIds.forEach((id) => this.removeById(projects, id));
-    this.set(K_WATCHED_PROJECTS, projects);
+    this.setWatchedProjects(projects);
   }
 
-  getWatchedProjects(): MinimalProject[] {
-    return this.get(K_WATCHED_PROJECTS, []);
+  private setWatchedProjects(projects: MinimalProject[]) {
+    this.set(K_WATCHED_PROJECTS, projects);
+    // we must also update the local storage
+    chrome?.storage?.local.set({ watchedProjectsIds: projects.map((value) => value.id) }).catch((e) => console.error(e));
   }
 
   get<T>(key: string, defaultValue: T): T {

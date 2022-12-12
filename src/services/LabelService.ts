@@ -26,7 +26,7 @@ export class LabelService {
       let pending = this.pendingLabels.get(projectId);
       const mustCache = !pending;
       if (!pending) {
-        pending = this.loadMethods(projectId);
+        pending = this.loadAllLabels(projectId);
         this.pendingLabels.set(projectId, pending);
       }
 
@@ -43,10 +43,9 @@ export class LabelService {
     return projectLabels.labels.find((label) => label.name === labelName)?.color;
   }
 
-  private async loadMethods(projectId: number): Promise<Label[]> {
+  private async loadAllLabels(projectId: number): Promise<Label[]> {
     const allLabels: Label[] = [];
     let result = await this.api.getProjectLabels(projectId, { perPage: LABELS_PER_PAGE });
-    console.log("Loaded labels", result);
     allLabels.push(...result.items);
     while (result.nextPageLink) {
       result = await this.api.fetchNextPage(result);

@@ -14,6 +14,7 @@ enum TokenErrorType {
   None,
   Missing,
   Invalid,
+  PermissionDenied,
 }
 
 export default function AccessTokenDialog(props: AccessTokenDialogProps) {
@@ -75,6 +76,7 @@ export default function AccessTokenDialog(props: AccessTokenDialogProps) {
     const version = ++validationVersion.current;
 
     try {
+      const actualHost = host || "gitlab.com";
       setTokenError(TokenErrorType.None);
 
       if (!isFormChanged) {
@@ -88,15 +90,32 @@ export default function AccessTokenDialog(props: AccessTokenDialogProps) {
         return;
       }
 
+      // verify token
       let user: GitLabUser;
       try {
-        user = await makeGitLabApi(host || "gitlab.com", token).currentUser();
+        user = await makeGitLabApi(actualHost, token).currentUser();
         if (version !== validationVersion.current) return;
       } catch (e) {
         if (version !== validationVersion.current) return;
         console.error("Unable to verify token on host " + host, e);
         setTokenError(TokenErrorType.Invalid);
         return;
+      }
+
+      // request permission
+      if (chrome) {
+        const permission = {
+          origins: [`https://${actualHost}/*`],
+        };
+        const granted = await new Promise<boolean>((resolve) => {
+          chrome.permissions.request(permission, (granted) => {
+            resolve(granted);
+          });
+        });
+        if (!granted) {
+          setTokenError(TokenErrorType.PermissionDenied);
+          return;
+        }
       }
 
       // save
@@ -130,6 +149,7 @@ export default function AccessTokenDialog(props: AccessTokenDialogProps) {
             <FormControl.Caption>The following scopes must be granted to the access token: [read_api]</FormControl.Caption>
             {tokenError === TokenErrorType.Missing && <FormControl.Validation variant="error">Enter a private token</FormControl.Validation>}
             {tokenError === TokenErrorType.Invalid && <FormControl.Validation variant="error">The provided token is not valid</FormControl.Validation>}
+            {tokenError === TokenErrorType.PermissionDenied && <FormControl.Validation variant="error">The permission was not granted</FormControl.Validation>}
           </FormControl>
 
           <Box my={2}>
