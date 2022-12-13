@@ -1,6 +1,6 @@
 {
   "env": {
-    "__DEV__": "true"
+    "NODE_ENV": "development"
   },
   "watch": ["src", "utils", "vite.config.ts"],
   "ext": "tsx,css,scss,html,ts",

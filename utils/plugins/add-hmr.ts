@@ -2,7 +2,7 @@ import * as path from "path";
 import { PluginOption } from "vite";
 import { readFileSync } from "fs";
 
-const isDev = process.env.__DEV__ === "true";
+const isDev = process.env.NODE_ENV === "development";
 
 const DUMMY_CODE = `export default function(){};`;
 

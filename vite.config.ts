@@ -12,11 +12,12 @@ const assetsDir = resolve(root, "assets");
 const outDir = resolve(__dirname, "dist");
 const publicDir = resolve(__dirname, "public");
 
-const isDev = process.env.__DEV__ === "true";
+const isDev = process.env.NODE_ENV === "development";
 
 // ENABLE HMR IN BACKGROUND SCRIPT
 const enableHmrInBackgroundScript = true;
 
+console.log("isDev", isDev);
 export default defineConfig({
   resolve: {
     alias: {
@@ -30,6 +31,7 @@ export default defineConfig({
   build: {
     outDir,
     sourcemap: isDev,
+    minify: !isDev,
     rollupOptions: {
       input: {
         background: resolve(pagesDir, "background", "index.ts"),
@@ -41,7 +43,7 @@ export default defineConfig({
       },
       output: {
         entryFileNames: "src/pages/[name]/index.js",
-        chunkFileNames: isDev ? "assets/js/[name].js" : "assets/js/[name].[hash].js",
+        chunkFileNames: "assets/js/[name].[hash].js",
         preserveModules: false,
         esModule: false,
         assetFileNames: (assetInfo) => {
