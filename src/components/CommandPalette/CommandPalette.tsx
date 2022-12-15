@@ -1,11 +1,16 @@
 import styled from "styled-components";
-import { ActionList, Avatar, Box, Dialog, TextInput } from "@primer/react";
+import { ActionList, Box, Dialog, TextInput } from "@primer/react";
 import { SearchIcon } from "@primer/octicons-react";
-import { KeyboardEvent, useCallback, useRef } from "react";
+import { createContext, KeyboardEvent, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Result, ResultType } from "@src/components/CommandPalette/command-palette-objects";
+import { ResultView } from "@src/components/CommandPalette/ResultView";
 
 interface StyleProps {
   isOpen: boolean;
 }
+
+export const ResultListContext = createContext<{ results: Result[]; selectedItem: Result }>(undefined);
+ResultListContext.displayName = "ResultListContext";
 
 const DialogWrapper = styled.div<StyleProps>`
   position: fixed;
@@ -22,18 +27,74 @@ const DialogWrapper = styled.div<StyleProps>`
   }
 `;
 
+function makeFakeResultList(): Result[] {
+  const result: Array<Result> = [];
+  for (let i = 0; i < 50; i++) {
+    result.push({
+      key: "cmd-" + i,
+      title: `Title ${i} `,
+      type: ResultType.Issue,
+      description: `Description ${i}`,
+      issue: {
+        id: i,
+        iid: i,
+        title: `Title ${i}`,
+        webUrl: "https://gitlab.com",
+      },
+    });
+  }
+  return result;
+}
+
 export function CommandPalette(props: { isOpen: boolean; onDismiss?: () => void }) {
   const textInput = useRef();
+  const [searchText, setSearchText] = useState("");
+
+  const resultList = useRef<Result[]>([]);
+  const selectedIndex = useRef(-1);
+
+  const [, setReload] = useState(0);
 
   const onInputKeydown = useCallback((e: KeyboardEvent) => {
-    console.log("onInputKeydown", e.key);
     // Eat tab key
     if (e.key === "Tab") {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      selectedIndex.current = Math.min(selectedIndex.current + 1, resultList.current.length - 1);
+      setReload((prev) => prev + 1);
+      return false;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      selectedIndex.current = Math.max(0, selectedIndex.current - 1);
+      setReload((prev) => prev + 1);
+      return false;
+    }
   }, []);
+
+  const showResults = useCallback((results: Result[]) => {
+    if (selectedIndex.current >= 0) {
+      const selectedItem = resultList.current[selectedIndex.current];
+      selectedIndex.current = results.findIndex((item) => item.key === selectedItem?.key);
+    } else if (results.length > 0) {
+      selectedIndex.current = 0;
+    } else {
+      selectedIndex.current = -1;
+    }
+    resultList.current = results;
+    setReload((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      showResults(makeFakeResultList());
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [searchText, showResults]);
 
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -49,8 +110,6 @@ export function CommandPalette(props: { isOpen: boolean; onDismiss?: () => void 
         initialFocusRef={textInput}
         isOpen={props.isOpen}
         onDismiss={props.onDismiss}
-        aria-labelledby="header-id"
-        onKeyDown={onInputKeydown}
         wide
       >
         <Box display={"flex"} borderBottom="1px solid" borderBottomColor="border.default">
@@ -61,53 +120,37 @@ export function CommandPalette(props: { isOpen: boolean; onDismiss?: () => void 
             leadingVisual={SearchIcon}
             onKeyDown={onInputKeydown}
             loading={false}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </Box>
         <Box maxHeight={400} overflowY={"scroll"} sx={{ overscrollBehavior: "contain" }}>
-          <ActionList variant="full">
-            <RenderItem active={false} title="Item1" description="Monalisa Octocat" />
-            <RenderItem active={true} title="Item2" description="Hubot" />
-            <RenderItem active={false} title="Item2" description="Hubot" />
-            <RenderItem active={false} title="Item2" description="Hubot" />
-            {Array.from(Array(100).keys()).map((i) => (
-              <RenderItem key={i} active={false} title={"Item " + i} description="Hubot" />
-            ))}
-          </ActionList>
+          <ResultListContext.Provider value={{ results: resultList.current, selectedItem: resultList.current[selectedIndex.current] }}>
+            <CommandPaletteContent />
+          </ResultListContext.Provider>
         </Box>
       </Dialog>
     </DialogWrapper>
   );
 }
 
-function RenderItem(props: { active: boolean; title: string; description: string }) {
-  const styleOverride = {
-    width: "100%",
-    ":focus-within": { borderColor: "transparent", boxShadow: "none" },
-  };
-
-  if (props.active) {
-    // Remove the left border
-    styleOverride["&::after"] = {
-      display: "none",
-    };
-  }
-
-  const onInputKeydown = useCallback((e: KeyboardEvent) => {
-    // Eat tab key
-    if (e.key === "Tab") {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }
-  }, []);
-
+/** Hack needed to avoid re-rendering ActionList when it is not strictly necessary */
+const CommandPaletteContent = memo(() => {
   return (
-    <ActionList.Item active={props.active} onKeyDown={onInputKeydown} sx={styleOverride}>
-      <ActionList.LeadingVisual>
-        <Avatar src="https://github.com/mona.png" />
-      </ActionList.LeadingVisual>
-      {props.title}
-      <ActionList.Description>{props.description}</ActionList.Description>
-    </ActionList.Item>
+    <ActionList variant="full">
+      <ResultList />
+    </ActionList>
+  );
+});
+CommandPaletteContent.displayName = "CommandPaletteContent";
+
+function ResultList() {
+  const ctx = useContext(ResultListContext);
+  return (
+    <>
+      {ctx.results.map((result) => (
+        <ResultView key={result.key} active={result == ctx.selectedItem} result={result} />
+      ))}
+    </>
   );
 }

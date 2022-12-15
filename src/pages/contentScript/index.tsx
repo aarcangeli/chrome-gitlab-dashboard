@@ -1,5 +1,5 @@
 import { createRoot, Root } from "react-dom/client";
-import { BaseStyles, ThemeProvider, ActionList, Avatar } from "@primer/react";
+import { BaseStyles, ThemeProvider } from "@primer/react";
 import React from "react";
 import { CommandPalette } from "@src/components/CommandPalette/CommandPalette";
 
@@ -46,8 +46,3 @@ function renderCommandPalette() {
     </ThemeProvider>
   );
 }
-
-setTimeout(() => {
-  initCommandPalette();
-  renderCommandPalette();
-}, 10);
