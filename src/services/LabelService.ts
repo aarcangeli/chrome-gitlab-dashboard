@@ -14,7 +14,10 @@ const LABELS_PER_PAGE = 100;
 export class LabelService {
   private pendingLabels = new Map<number, Promise<Label[]>>();
 
-  constructor(private readonly api: GitLabApi, private readonly storage: PersistentStorage) {
+  constructor(
+    private readonly api: GitLabApi,
+    private readonly storage: PersistentStorage
+  ) {
     storage.getCache(CACHE_KEY);
   }
 

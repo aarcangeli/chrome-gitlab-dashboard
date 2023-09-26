@@ -3,7 +3,10 @@ import { gql, GraphQLClient } from "graphql-request";
 import { MinimalProject } from "@src/services/dao";
 
 class GitLabApiImpl implements GitLabApi {
-  constructor(private host: string, private privateToken: string) {}
+  constructor(
+    private host: string,
+    private privateToken: string
+  ) {}
 
   async projects(query: string | undefined, options: QueryOptions): Promise<PaginatedResult<GitLabProject>> {
     return await this.invokePaginatedApi(`/projects`, options.signal, {
